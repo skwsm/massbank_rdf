@@ -400,7 +400,17 @@ module MassBank
     end
 
     def rdf_sp_name(v)
-      statement(@sp_bnode, @mbo[:sp_name], RDF::Literal.new(v, :language => :en))
+      statements = []
+      if @sp_bnode == nil
+        @sp_bnode = RDF::Node.new
+        statements << statement(@primary_subject, @mbo[:biological_sample], @sp_bnode)
+        statements << statement(@sp_bnode, RDF.type, @mbo[:BiologicalSample])
+        statements << statement(@sp_bnode, @mbo[:sp_name],
+                                RDF::Literal.new(v, :language => :en))
+        return statements
+      else
+        return statement(@sp_bnode, @mbo[:sp_name], RDF::Literal.new(v, :language => :en))
+      end
     end
 
     def rdf_sp_lineage(v)
@@ -446,18 +456,30 @@ module MassBank
         when "ION_MODE"
           statements << statement(@ac_bnode, @mbo[:ion_mode], value)
         when "COLLISION_ENERGY"
-          /^(\d+)\s+(.+)$/ =~ value
-          collision_energy = $1
-          unit = $2
-          bnode = RDF::Node.new
-          statements << statement(@ac_bnode, @mbo[:collision_energy], bnode)
-          statements << statement(bnode, RDF.value,
-                                  RDF::Literal.new(collision_energy,
-                                                   :datatype => RDF::XSD.decimal))
+          unit = ""
+          if /^(.+)\s+(\S+)$/ =~ value
+            # ex. Ramp 21.1-31.6 eV
+            collision_energy = $1
+            unit = $2
+            bnode = RDF::Node.new
+            statements << statement(@ac_bnode, @mbo[:collision_energy], bnode)
+            statements << statement(bnode, RDF.value,
+                                    RDF::Literal.new(collision_energy))
+          elsif /^(\d+)\s+(.+)$/ =~ value
+            collision_energy = $1
+            unit = $2
+            bnode = RDF::Node.new
+            statements << statement(@ac_bnode, @mbo[:collision_energy], bnode)
+            statements << statement(bnode, RDF.value,
+                                    RDF::Literal.new(collision_energy,
+                                                     :datatype => RDF::XSD.decimal))
+          end
           if unit == "kV"
             statements << statement(bnode, @sio[:SIO_000221], @obo[:UO_0000248])
           elsif unit == "V"
             statements << statement(bnode, @sio[:SIO_000221], @obo[:UO_0000218])
+          elsif unit == "eV"
+            statements << statement(bnode, @sio[:SIO_000221], @obo[:UO_0000266])
           end
 
         when "COLLISION_GAS"
