@@ -3,7 +3,7 @@ require 'rubygems'
 require 'rdf'
 require 'rdf/ntriples'
 require 'rdf/turtle'
-require './massbank.rb'
+require '../lib/massbank.rb'
 include RDF
 
 f = open(ARGV.shift)
