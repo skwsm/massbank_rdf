@@ -536,7 +536,7 @@ module MassBank
           statements << statement(@ac_bnode, @mbo[subtag.downcase.to_sym], value)
         when "RESOLUTION"
           statements << statement(@ac_bnode, @mbo[subtag.downcase.to_sym],
-                                  RDF::Literal.new(value, :datatype => RDF::XSD.decimal))
+                                  RDF::Literal.new(value, :datatype => RDF::XSD.integer))
         else
           put_error_message("Unknown subtag:#{subtag} .")
           statements << statement(@ac_bnode, @mbo[subtag.downcase.to_sym], value)
@@ -591,7 +591,7 @@ module MassBank
           statements << statement(@ac_bnode, @mbo[:solvent], RDF::Literal.new(dsc))
         when "NAPS_RTI"
           statements << statement(@ac_bnode, @mbo[:naps_rti],
-                                  RDF::Literal.new(dsc, :datatype => RDF::XSD.decimal))
+                                  RDF::Literal.new(dsc, :datatype => RDF::XSD.integer))
         else
           put_error_message("Unknown subtag:#{subtag} .")
         end
