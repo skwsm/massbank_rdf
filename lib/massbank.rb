@@ -589,6 +589,9 @@ module MassBank
           statements << statement(bnode, @sio[:SIO_000221], @obo[:UO_0000031])
         when "SOLVENT"
           statements << statement(@ac_bnode, @mbo[:solvent], RDF::Literal.new(dsc))
+        when "NAPS_RTI"
+          statements << statement(@ac_bnode, @mbo[:naps_rti],
+                                  RDF::Literal.new(dsc, :datatype => RDF::XSD.decimal))
         else
           put_error_message("Unknown subtag:#{subtag} .")
         end
