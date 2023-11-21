@@ -120,6 +120,7 @@ module MassBank
         pubchem: "http://identifiers.org/pubchem.substance/",
         pubchem_compound: "http://identifiers.org/pubchem.compound/",
         hmdb: "http://www.hmdb.ca/metabolites/",
+        comptox: "http://comptox.epa.gov/dashboard/chemical/details/",
         taxonomy: "http://identifiers.org/taxonomy/",
         pubmed: "http://identifiers.org/pubmed/",
         bibo: "http://purl.org/ontology/bibo/",
@@ -372,6 +373,8 @@ module MassBank
           end
         when "HMDB"
           objt = RDF::URI.new(@prefixes[:hmdb] + entry_id)
+        when "COMPTOX"
+          objt = RDF::URI.new(@prefixes[:comptox] + entry_id)
         else
           put_error_message("Unlisted DB: #{db} .")
         end
