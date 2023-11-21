@@ -532,7 +532,11 @@ module MassBank
           elsif unit == "eV"
             statements << statement(bnode, @sio[:SIO_000221], @obo[:UO_0000266])
           end
-
+        when "FRAGMENTATION_MODE"
+          statements << statement(@ac_bnode, @mbo[subtag.downcase.to_sym], value)
+        when "RESOLUTION"
+          statements << statement(@ac_bnode, @mbo[subtag.downcase.to_sym],
+                                  RDF::Literal.new(value, :datatype => RDF::XSD.decimal))
         else
           put_error_message("Unknown subtag:#{subtag} .")
           statements << statement(@ac_bnode, @mbo[subtag.downcase.to_sym], value)
