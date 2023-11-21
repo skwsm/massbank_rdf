@@ -504,6 +504,35 @@ module MassBank
           statements << statement(@ac_bnode, @mbo[subtag.downcase.to_sym], value)
         when "SCANNING"
           statements << statement(@ac_bnode, @mbo[subtag.downcase.to_sym], value)
+        when "IONIZATION"
+          statements << statement(@ac_bnode, @mbo[subtag.downcase.to_sym], value)
+        when "IONIZATION_VOLTAGE"
+          unit = ""
+          if /^(.+)\s+(\S+)$/ =~ value
+            # ex. 3.9 kV
+            ionization_voltage = $1
+            unit = $2
+            bnode = RDF::Node.new
+            statements << statement(@ac_bnode, @mbo[:ionization_voltage], bnode)
+            statements << statement(bnode, RDF.value,
+                                    RDF::Literal.new(ionization_voltage))
+          elsif /^(\d+)\s+(.+)$/ =~ value
+            ionization_voltage = $1
+            unit = $2
+            bnode = RDF::Node.new
+            statements << statement(@ac_bnode, @mbo[:ionization_voltage], bnode)
+            statements << statement(bnode, RDF.value,
+                                    RDF::Literal.new(ionization_voltage,
+                                                     :datatype => RDF::XSD.decimal))
+          end
+          if unit == "kV"
+            statements << statement(bnode, @sio[:SIO_000221], @obo[:UO_0000248])
+          elsif unit == "V"
+            statements << statement(bnode, @sio[:SIO_000221], @obo[:UO_0000218])
+          elsif unit == "eV"
+            statements << statement(bnode, @sio[:SIO_000221], @obo[:UO_0000266])
+          end
+
         else
           put_error_message("Unknown subtag:#{subtag} .")
           statements << statement(@ac_bnode, @mbo[subtag.downcase.to_sym], value)
